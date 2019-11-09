@@ -23,14 +23,14 @@ import java.util.Date;
 
 @SpringBootApplication
 @EnableBatchProcessing
-public class SpringBatchApplication implements CommandLineRunner {
+public class SpringBatchApplication implements CommandLineRunner{
 
 	@Autowired
-	JobLauncher jobLauncher;
+	private JobLauncher jobLauncher;
 
 	@Autowired
-	@Qualifier("accountJob")
-	Job accountKeeperJob;
+	@Qualifier("importUserJob")
+	private Job importUserJob;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBatchApplication.class, args);
@@ -41,8 +41,6 @@ public class SpringBatchApplication implements CommandLineRunner {
 		JobParameters jobParameters = new JobParametersBuilder()
 				.addString("source", "Spring Boot")
 				.toJobParameters();
-		jobLauncher.run(accountKeeperJob, jobParameters);
-
-		System.out.println("Job started");
+		jobLauncher.run(importUserJob, jobParameters);
 	}
 }
