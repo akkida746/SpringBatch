@@ -34,11 +34,14 @@ public class BatchConfiguration {
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
 
+    @Autowired
+    public FileMovingTasklet fileMovingTasklet;
+
     @Bean
     public FlatFileItemReader<Person> reader() {
         return new FlatFileItemReaderBuilder<Person>()
                 .name("personItemReader")
-                .resource(new ClassPathResource("sample-data.csv"))
+                .resource(new ClassPathResource("ssample-data.csv"))
                 .delimited()
                 .names(new String[]{"firstName", "lastName"})
                 .fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
@@ -67,6 +70,7 @@ public class BatchConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(step1)
+                .next(step2())
                 .end()
                 .build();
     }
@@ -78,6 +82,13 @@ public class BatchConfiguration {
                 .reader(reader())
                 .processor(processor())
                 .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step step2(){
+        return stepBuilderFactory.get("step2")
+                .tasklet(fileMovingTasklet)
                 .build();
     }
 }
